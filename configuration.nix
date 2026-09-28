@@ -233,6 +233,7 @@ in
       ncurses
       porffor
       gh
+      pnpm
     ];
   environment.sessionVariables = {
     SAL_USE_VCLPLUGIN = "gtk3";
