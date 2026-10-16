@@ -137,6 +137,34 @@ in
     libxtst
     libxi
     libelf
+    pkgs.fontconfig
+    libusb1
+    libinput
+    libudev-zero
+    avahi
+    icu
+    libice
+    libsm
+    wayland
+    gtk4
+    gtk2
+    harfbuzz
+    freetype
+    flac
+    ffmpeg
+    xz
+    util-linux
+    libxml2
+    libssh
+    stdenv.cc.cc
+    zlib
+    zstd
+    curl
+    openssl
+    attr
+    bzip2
+    acl
+    libsodium
   ];
   fonts.fontconfig.enable = true;
   # Enable touchpad support (enabled default in most desktopManager).
@@ -234,12 +262,17 @@ in
       porffor
       gh
       pnpm
+      gdevelop
+      usbutils
+      yazi
+      blahaj
     ];
   environment.sessionVariables = {
     SAL_USE_VCLPLUGIN = "gtk3";
     XDG_CURRENT_DESKTOP = "Hyprland";
-    NIXOS_OZONE_WL = "1";
+    NIXOS_OZONE_WL = 1;
     GSETTINGS_SCHEMA_DIR = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
+    LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
   };
 
   # Some programs need SUID wrappers, can be configured further or are
