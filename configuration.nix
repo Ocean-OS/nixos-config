@@ -250,11 +250,17 @@ in
             porffor
             gh
             pnpm
-            gdevelop
+            # gdevelop
             usbutils
             yazi
             blahaj
-        ];
+        ] ++ 
+        (if (builtins.currentSystem == "x86_64-linux") then [
+            arduino-ide
+            usbimager
+            gdevelop
+    	] 
+        else []);
 
     environment.etc."xdg/menus/applications.menu".source = "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
 
