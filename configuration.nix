@@ -239,7 +239,8 @@ in
             winetricks
             ffmpeg
             xdg-desktop-portal
-            usbimager
+# supposedly broken on aarch64, TODO do the above or switch to balena
+#            usbimager
             tmpmail
             pkgs.qemu
             bc
