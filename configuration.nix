@@ -32,6 +32,8 @@ in
     users.users."me" = {
         isNormalUser = true;
         description = " ";
+	home = "/home/me";
+	createHome = true;
         extraGroups = [
             "networkmanager"
             "wheel"
@@ -270,6 +272,7 @@ in
         NIXOS_OZONE_WL = "1";
         GSETTINGS_SCHEMA_DIR = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
         LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
+	ICED_BACKEND = (if (builtins.currentSystem == "x86_64-linux") "wgpu" else "tiny-skia");
     };
 
     # Some programs need SUID wrappers, can be configured further or
