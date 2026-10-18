@@ -212,7 +212,8 @@ in
             nodejs
             btop
             kitty
-            arduino-ide
+# currently not available for aarch64, TODO install only on supported arch
+#            arduino-ide
             arduino-cli
             pico-sdk
             xdg-desktop-portal-gtk
