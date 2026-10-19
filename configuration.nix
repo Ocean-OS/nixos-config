@@ -13,12 +13,12 @@ in
     imports = 
     if builtins.currentSystem == "x86_64-linux" then [
         (import "${home-manager}/nixos")
-	./hosts/thinkpad/hardware-configuration.nix
-	./hosts/thinkpad/bootloader.nix
+	    ./hosts/thinkpad/hardware-configuration.nix
+	    ./hosts/thinkpad/bootloader.nix
     ] else [
-	(import "${home-manager}/nixos")
-	./hosts/raspberry-pi/hardware-configuration.nix
-	./hosts/raspberry-pi/bootloader.nix
+	    (import "${home-manager}/nixos")
+	    ./hosts/raspberry-pi/hardware-configuration.nix
+	    ./hosts/raspberry-pi/bootloader.nix
     ];
 
     # Use latest kernel.
@@ -180,9 +180,19 @@ in
         bzip2
         acl
         libsodium
+	xwayland
     ];
     programs.direnv.enable = true;
-    programs.neovim.enable = true;
+    programs.neovim = {
+	enable = true;
+	configure = {
+	    customRC =  ''
+	        set tabstop=4
+		set shiftwidth=4
+	        set expandtab
+	    '';
+	};
+    };
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = 
@@ -241,8 +251,6 @@ in
             winetricks
             ffmpeg
             xdg-desktop-portal
-# supposedly broken on aarch64, TODO do the above or switch to balena
-#            usbimager
             tmpmail
             pkgs.qemu
             bc
@@ -259,6 +267,7 @@ in
         ] ++ 
         (if (builtins.currentSystem == "x86_64-linux") then [
             arduino-ide
+            # potentially broken, maybe switch to balena (which also gives aarch64 compat)?
             usbimager
             gdevelop
     	] 

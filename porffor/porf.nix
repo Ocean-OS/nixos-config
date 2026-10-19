@@ -1,13 +1,19 @@
 { stdenv, fetchurl, autoPatchelfHook, lib, ... }:
 stdenv.mkDerivation {
-	version = "alpha-9";
+	version = "alpha-17";
 	pname = "porffor";
 	name = "porffor";
 
-	src = fetchurl {
-		url = "https://github.com/CanadaHonk/porffor/releases/download/alpha-9/porffor-linux-x64.tar.gz";
-		sha256 = "sha256-bJEYn2Dr/AmXFYriVSUP0pct5j2cUYHNFrb0qp6dCoU=";
-	};
+	src = if (builtins.currentSystem == "x86_64-linux") then
+		(fetchurl {
+		    url = "https://github.com/CanadaHonk/porffor/releases/download/alpha-17/porffor-linux-x64.tar.gz";
+                    sha256 = "sha256-B0N4/GkFvRYFc9YBdBvtmemVwKAP+dlrhA47nNMznZE=";
+		})
+		else
+		(fetchurl {
+			url = "https://github.com/CanadaHonk/porffor/releases/download/alpha-17/porffor-linux-arm64.tar.gz";
+			sha256 = "sha256-BHk5NQq1SwLpGWlFFgIhK6n5I7UkvvB8m8h9ENi3dTY=";
+		});
 
 	nativeBuildInputs = [
 		autoPatchelfHook
