@@ -180,7 +180,7 @@ in
         bzip2
         acl
         libsodium
-	xwayland
+    	xwayland
     ];
     programs.direnv.enable = true;
     programs.neovim = {
@@ -188,7 +188,7 @@ in
 	configure = {
 	    customRC =  ''
 	        set tabstop=4
-		set shiftwidth=4
+	    	set shiftwidth=4
 	        set expandtab
 	    '';
 	};
@@ -264,6 +264,8 @@ in
             usbutils
             yazi
             blahaj
+            hyprcursor
+            bibata-cursors
         ] ++ 
         (if (builtins.currentSystem == "x86_64-linux") then [
             arduino-ide
@@ -281,7 +283,7 @@ in
         NIXOS_OZONE_WL = "1";
         GSETTINGS_SCHEMA_DIR = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
         LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
-	ICED_BACKEND = (if (builtins.currentSystem == "x86_64-linux") then "wgpu" else "tiny-skia");
+	    ICED_BACKEND = (if (builtins.currentSystem == "x86_64-linux") then "wgpu" else "tiny-skia");
     };
 
     # Some programs need SUID wrappers, can be configured further or
