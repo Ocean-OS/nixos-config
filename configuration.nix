@@ -8,6 +8,7 @@
 }:
 let
     home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-26.05.tar.gz";
+    frc-nix = builtins.fetchTarball "https://github.com/frc4451/frc-nix/archive/5cd969ab9808fc0a8f4ff2bf290d5a8933e51e06.tar.gz";
 in
 {
     imports = 
@@ -21,6 +22,8 @@ in
 	    ./hosts/raspberry-pi/bootloader.nix
     ];
 
+    nixpkgs.overlays = [ (import "${frc-nix}/overlay.nix") ];
+
     # Use latest kernel.
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -32,11 +35,12 @@ in
     users.users."me" = {
         isNormalUser = true;
         description = " ";
-	home = "/home/me";
-	createHome = true;
+    	home = "/home/me";
+	    createHome = true;
         extraGroups = [
             "networkmanager"
             "wheel"
+            "input"
         ];
         packages = with pkgs; [
         ];
@@ -115,13 +119,16 @@ in
         enable = true;
         extraPortals = with pkgs; [
             xdg-desktop-portal-gtk
+            xdg-desktop-portal-hyprland
         ];
     };
     programs.hyprlock.enable = true;
     security.pam.services.hyprlock = { };
     security.polkit.enable = true;
     fonts.fontconfig.enable = true;
-    
+    fonts.packages = with pkgs; [
+        pkgs.adwaita-fonts
+    ];
     # Libraries
     programs.nix-ld.enable = true;
     programs.nix-ld.libraries = with pkgs; [
@@ -158,7 +165,6 @@ in
         libudev-zero
         avahi
         icu
-        libice
         libsm
         wayland
         gtk4
@@ -181,6 +187,12 @@ in
         acl
         libsodium
     	xwayland
+        libICE
+        SDL2
+        libxcb
+        libXt
+        libXinerama
+        libxkbcommon_8
     ];
     programs.direnv.enable = true;
     programs.neovim = {
@@ -193,6 +205,14 @@ in
 	    '';
 	};
     };
+
+    nixpkgs.config = {
+        allowUnfreePredicate = pkg:
+            builtins.elem (lib.getName pkg) [
+                "firstdriverstation"
+            ];
+    };
+
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = 
@@ -206,6 +226,7 @@ in
                         inherit pkgs;
                     };
             porffor = pkgs.callPackage ./porffor/porf.nix { };
+
         in
         with pkgs;
         [
@@ -266,15 +287,35 @@ in
             blahaj
             hyprcursor
             bibata-cursors
+            noctalia
+            jdk17
         ] ++ 
         (if (builtins.currentSystem == "x86_64-linux") then [
             arduino-ide
             # potentially broken, maybe switch to balena (which also gives aarch64 compat)?
             usbimager
             gdevelop
+            pkgs.wpilib.firstdriverstation
+            pkgs.pathplanner
+            pkgs.advantagescope
+            pkgs.elastic-dashboard
     	] 
         else []);
+    
+    services.udev.packages = with pkgs; [
+        wpilib.firstdriverstation
+    ];
+    services.udev.extraRules = ''
+    # USB-Blaster
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6001", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6002", MODE="0666", TAG+="uaccess"
 
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6003", MODE="0666", TAG+="uaccess"
+
+    # USB-Blaster II
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6010", MODE="0666", TAG+="uaccess"
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="09fb", ATTRS{idProduct}=="6810", MODE="0666", TAG+="uaccess"
+  '';
     environment.etc."xdg/menus/applications.menu".source = "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
 
     environment.sessionVariables = {
@@ -284,6 +325,10 @@ in
         GSETTINGS_SCHEMA_DIR = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
         LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
 	    ICED_BACKEND = (if (builtins.currentSystem == "x86_64-linux") then "wgpu" else "tiny-skia");
+    };
+
+    environment.variables = {
+        DOTNET_hostBuilder__reloadConfigOnChange = "false";
     };
 
     # Some programs need SUID wrappers, can be configured further or
